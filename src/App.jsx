@@ -3,7 +3,135 @@ import { cn } from './lib/utils'
 
 const API_BASE = import.meta.env.VITE_API_BASE || '/api'
 
+// Authentication constants
+const AUTH_STORAGE_KEY = 'warehouse_auth'
+const CORRECT_USERNAME = 'admin'
+const CORRECT_PASSWORD = 'admin0648'
+
+function Login({ onLogin }) {
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [darkMode, setDarkMode] = useState(true)
+
+  useEffect(() => {
+    const root = document.documentElement
+    root.classList.toggle('dark', darkMode)
+  }, [darkMode])
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    setError('')
+
+    if (username === CORRECT_USERNAME && password === CORRECT_PASSWORD) {
+      localStorage.setItem(AUTH_STORAGE_KEY, 'authenticated')
+      onLogin()
+    } else {
+      setError('Invalid username or password')
+      setPassword('')
+    }
+  }
+
+  const surface =
+    'bg-white text-slate-900 ring-slate-200 dark:bg-slate-900/80 dark:text-slate-50 dark:ring-slate-800'
+  const accent =
+    'bg-sky-600 text-white hover:bg-sky-500 focus-visible:ring-sky-400 active:bg-sky-700'
+
+  return (
+    <div
+      className={cn(
+        'flex min-h-screen items-center justify-center transition-colors',
+        darkMode ? 'bg-slate-950' : 'bg-slate-100',
+      )}
+    >
+      <div className="w-full max-w-md px-4">
+        <div
+          className={cn(
+            'rounded-2xl p-8 shadow-2xl ring-1 backdrop-blur',
+            surface,
+          )}
+        >
+          <div className="mb-6 text-center">
+            <p className="text-xs font-semibold uppercase tracking-wide text-cyan-400 dark:text-cyan-300">
+              Warehouse Management
+            </p>
+            <h1 className="mt-2 text-3xl font-bold">Login</h1>
+            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+              Enter your credentials to access the system
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label
+                htmlFor="username"
+                className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200"
+              >
+                Username
+              </label>
+              <input
+                id="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:ring-cyan-400"
+                placeholder="Enter username"
+                required
+                autoFocus
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="password"
+                className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200"
+              >
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:ring-cyan-400"
+                placeholder="Enter password"
+                required
+              />
+            </div>
+
+            {error && (
+              <div className="rounded-lg bg-rose-50 p-3 text-sm text-rose-600 dark:bg-rose-950/20 dark:text-rose-400">
+                {error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className={cn(
+                'w-full rounded-lg px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow',
+                accent,
+              )}
+            >
+              Sign In
+            </button>
+          </form>
+
+          <div className="mt-6 flex justify-center">
+            <button
+              onClick={() => setDarkMode((d) => !d)}
+              className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+            >
+              {darkMode ? 'Light mode' : 'Dark mode'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [categories, setCategories] = useState([])
   const [types, setTypes] = useState([])
   const [phones, setPhones] = useState([])
@@ -35,8 +163,18 @@ function App() {
     image: '',
   })
 
-  // Fetch all data on mount
+  // Check authentication on mount
   useEffect(() => {
+    const authStatus = localStorage.getItem(AUTH_STORAGE_KEY)
+    if (authStatus === 'authenticated') {
+      setIsAuthenticated(true)
+    }
+  }, [])
+
+  // Fetch all data on mount (only if authenticated)
+  useEffect(() => {
+    if (!isAuthenticated) return
+
     const fetchAll = async () => {
       setLoading(true)
       setError(null)
@@ -72,7 +210,12 @@ function App() {
     }
 
     fetchAll()
-  }, [])
+  }, [isAuthenticated])
+
+  // Show login page if not authenticated
+  if (!isAuthenticated) {
+    return <Login onLogin={() => setIsAuthenticated(true)} />
+  }
 
   const colors = useMemo(() => {
     const set = new Set(products.map((p) => p.color))

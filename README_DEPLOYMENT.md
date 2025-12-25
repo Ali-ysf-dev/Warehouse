@@ -16,6 +16,7 @@ This project is configured to use Google Sheets as the data source and is ready 
    ```
    https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit
    ```
+   
 
 ### 2. Google Service Account Setup
 
