@@ -115,15 +115,6 @@ function Login({ onLogin }) {
               Sign In
             </button>
           </form>
-
-          <div className="mt-6 flex justify-center">
-            <button
-              onClick={() => setDarkMode((d) => !d)}
-              className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
-            >
-              {darkMode ? 'Light mode' : 'Dark mode'}
-            </button>
-          </div>
         </div>
       </div>
     </div>
@@ -136,7 +127,7 @@ function App() {
   const [types, setTypes] = useState([])
   const [phones, setPhones] = useState([])
   const [products, setProducts] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [darkMode, setDarkMode] = useState(true)
   const [view, setView] = useState('view')
@@ -173,7 +164,10 @@ function App() {
 
   // Fetch all data on mount (only if authenticated)
   useEffect(() => {
-    if (!isAuthenticated) return
+    if (!isAuthenticated) {
+      setLoading(false)
+      return
+    }
 
     const fetchAll = async () => {
       setLoading(true)
@@ -486,11 +480,14 @@ function App() {
     return (
       <div
         className={cn(
-          'flex min-h-screen items-center justify-center',
-          darkMode ? 'bg-slate-950' : 'bg-slate-100',
+          'flex min-h-screen items-center justify-center transition-colors',
+          darkMode ? 'bg-slate-950 text-slate-50' : 'bg-slate-100 text-slate-900',
         )}
       >
-        <p className="text-lg text-slate-600 dark:text-slate-300">Loading...</p>
+        <div className="text-center">
+          <p className="text-lg font-medium text-slate-600 dark:text-slate-300">Loading...</p>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Please wait while we fetch your data</p>
+        </div>
       </div>
     )
   }
