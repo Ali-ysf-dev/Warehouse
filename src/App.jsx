@@ -1165,74 +1165,72 @@ function App() {
           </main>
         )}
 
-        {view === 'view' && (
-          <section className="mt-8">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Products</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-300">
-                Showing {filteredProducts.length} of {products.length}
-              </p>
-            </div>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredProducts.map((product) => (
-                <article
-                  key={product.id}
-                  className={cn(
-                    'flex flex-col overflow-hidden rounded-2xl shadow-lg ring-1 backdrop-blur transition hover:-translate-y-1 hover:shadow-xl',
-                    surface,
-                  )}
-                >
-                  <div className="relative h-40 w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="h-full w-full object-cover transition hover:scale-105"
-                    />
-                    <span className="absolute left-2 top-2 rounded-full bg-white/85 px-2 py-1 text-xs font-semibold text-slate-700 shadow-sm dark:bg-slate-800/85 dark:text-slate-100">
-                      {productCategoryName(product)}
-                    </span>
-                  </div>
-                  <div className="flex flex-1 flex-col gap-1 px-4 py-3">
-                    <h3 className="text-base font-semibold">{product.name}</h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-300">
-                      {productTypeName(product)} • {productPhoneName(product)}
-                    </p>
-                    <p className="text-sm text-slate-600 dark:text-slate-300">
-                      Color: {product.color}
-                    </p>
-                    <p
+        <section className="mt-8">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold">Products</h2>
+            <p className="text-sm text-slate-500 dark:text-slate-300">
+              Showing {filteredProducts.length} of {products.length}
+            </p>
+          </div>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredProducts.map((product) => (
+              <article
+                key={product.id}
+                className={cn(
+                  'flex flex-col overflow-hidden rounded-2xl shadow-lg ring-1 backdrop-blur transition hover:-translate-y-1 hover:shadow-xl',
+                  surface,
+                )}
+              >
+                <div className="relative h-40 w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="h-full w-full object-cover transition hover:scale-105"
+                  />
+                  <span className="absolute left-2 top-2 rounded-full bg-white/85 px-2 py-1 text-xs font-semibold text-slate-700 shadow-sm dark:bg-slate-800/85 dark:text-slate-100">
+                    {productCategoryName(product)}
+                  </span>
+                </div>
+                <div className="flex flex-1 flex-col gap-1 px-4 py-3">
+                  <h3 className="text-base font-semibold">{product.name}</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-300">
+                    {productTypeName(product)} • {productPhoneName(product)}
+                  </p>
+                  <p className="text-sm text-slate-600 dark:text-slate-300">
+                    Color: {product.color}
+                  </p>
+                  <p
+                    className={cn(
+                      'text-sm font-semibold',
+                      product.stock > 0 ? 'text-emerald-500' : 'text-rose-400',
+                    )}
+                  >
+                    Available: {product.stock}
+                  </p>
+                  <div className="mt-auto flex gap-2 py-2">
+                    <button
+                      onClick={() => addToCart(product)}
+                      disabled={product.stock === 0}
                       className={cn(
-                        'text-sm font-semibold',
-                        product.stock > 0 ? 'text-emerald-500' : 'text-rose-400',
+                        'flex-1 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm transition',
+                        product.stock === 0
+                          ? 'cursor-not-allowed bg-slate-200 text-slate-500 dark:bg-slate-800 dark:text-slate-500'
+                          : `${accent} hover:-translate-y-0.5 hover:shadow-lg`,
                       )}
                     >
-                      Available: {product.stock}
-                    </p>
-                    <div className="mt-auto flex gap-2 py-2">
-                      <button
-                        onClick={() => addToCart(product)}
-                        disabled={product.stock === 0}
-                        className={cn(
-                          'flex-1 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm transition',
-                          product.stock === 0
-                            ? 'cursor-not-allowed bg-slate-200 text-slate-500 dark:bg-slate-800 dark:text-slate-500'
-                            : `${accent} hover:-translate-y-0.5 hover:shadow-lg`,
-                        )}
-                      >
-                        {product.stock === 0 ? 'Out of stock' : 'Add to cart'}
-                      </button>
-                    </div>
+                      {product.stock === 0 ? 'Out of stock' : 'Add to cart'}
+                    </button>
                   </div>
-                </article>
-              ))}
-            </div>
-            {filteredProducts.length === 0 && (
-              <p className="mt-4 text-sm text-slate-500 dark:text-slate-300">
-                No products match filters.
-              </p>
-            )}
-          </section>
-        )}
+                </div>
+              </article>
+            ))}
+          </div>
+          {filteredProducts.length === 0 && (
+            <p className="mt-4 text-sm text-slate-500 dark:text-slate-300">
+              No products match filters.
+            </p>
+          )}
+        </section>
       </div>
     </div>
   )
