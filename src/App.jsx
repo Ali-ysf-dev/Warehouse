@@ -164,6 +164,10 @@ function App() {
   const [imagePreview, setImagePreview] = useState('')
   const fileInputRef = useRef(null)
   const [selectedProduct, setSelectedProduct] = useState(null)
+  
+  // Edit state for categories
+  const [editingCategoryId, setEditingCategoryId] = useState(null)
+  const [editCategoryName, setEditCategoryName] = useState('')
 
   // Fetch all data when authenticated
   useEffect(() => {
@@ -534,6 +538,40 @@ function App() {
     } catch (err) {
       alert('Error deleting product: ' + err.message)
     }
+  }
+
+  const handleEditCategory = (category) => {
+    setEditingCategoryId(category.id)
+    setEditCategoryName(category.name)
+  }
+
+  const handleUpdateCategory = async (categoryId, rowIndex) => {
+    if (!editCategoryName.trim()) return
+    try {
+      const res = await fetch(`${API_BASE}/categories`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rowIndex, name: editCategoryName.trim() }),
+      })
+      if (!res.ok) throw new Error('Failed to update category')
+
+      // Refresh categories from server to ensure consistency
+      const catsRes = await fetch(`${API_BASE}/categories`)
+      if (catsRes.ok) {
+        const updatedCats = await catsRes.json()
+        setCategories(updatedCats)
+      }
+
+      setEditingCategoryId(null)
+      setEditCategoryName('')
+    } catch (err) {
+      console.error('Error updating category: ' + err.message)
+    }
+  }
+
+  const handleCancelEditCategory = () => {
+    setEditingCategoryId(null)
+    setEditCategoryName('')
   }
 
   const handleDeleteCategory = async (categoryId, rowIndex) => {
@@ -955,15 +993,51 @@ function App() {
                               key={c.id}
                               className="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm transition-colors hover:border-slate-300 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-slate-600 dark:hover:bg-slate-700/50"
                             >
-                              <span className="font-medium text-slate-700 dark:text-slate-200">
-                                {c.name}
-                              </span>
-                              <button
-                                onClick={() => handleDeleteCategory(c.id, c._rowIndex)}
-                                className="rounded px-2 py-1 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-900/30 dark:hover:text-rose-300"
-                              >
-                                Löschen
-                              </button>
+                              {editingCategoryId === c.id ? (
+                                <>
+                                  <input
+                                    type="text"
+                                    value={editCategoryName}
+                                    onChange={(e) => setEditCategoryName(e.target.value)}
+                                    className="flex-1 rounded border border-slate-300 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
+                                    autoFocus
+                                  />
+                                  <div className="ml-2 flex gap-1">
+                                    <button
+                                      onClick={() => handleUpdateCategory(c.id, c._rowIndex)}
+                                      className="rounded px-2 py-1 text-xs font-medium text-emerald-600 transition-colors hover:bg-emerald-50 hover:text-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-900/30 dark:hover:text-emerald-300"
+                                    >
+                                      Speichern
+                                    </button>
+                                    <button
+                                      onClick={handleCancelEditCategory}
+                                      className="rounded px-2 py-1 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-300"
+                                    >
+                                      Abbrechen
+                                    </button>
+                                  </div>
+                                </>
+                              ) : (
+                                <>
+                                  <span className="font-medium text-slate-700 dark:text-slate-200">
+                                    {c.name}
+                                  </span>
+                                  <div className="flex gap-1">
+                                    <button
+                                      onClick={() => handleEditCategory(c)}
+                                      className="rounded px-2 py-1 text-xs font-medium text-sky-600 transition-colors hover:bg-sky-50 hover:text-sky-700 dark:text-sky-400 dark:hover:bg-sky-900/30 dark:hover:text-sky-300"
+                                    >
+                                      Bearbeiten
+                                    </button>
+                                    <button
+                                      onClick={() => handleDeleteCategory(c.id, c._rowIndex)}
+                                      className="rounded px-2 py-1 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-900/30 dark:hover:text-rose-300"
+                                    >
+                                      Löschen
+                                    </button>
+                                  </div>
+                                </>
+                              )}
                             </div>
                           ))}
                           {categories.length === 0 && (
