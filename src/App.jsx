@@ -25,7 +25,7 @@ function Login({ onLogin }) {
 
     if (username === CORRECT_USERNAME && password === CORRECT_PASSWORD) {
       localStorage.setItem(AUTH_STORAGE_KEY, 'authenticated')
-      onLogin()
+      onLogin() // This will trigger re-render and show the main app
     } else {
       setError('Invalid username or password')
       setPassword('')
@@ -122,7 +122,11 @@ function Login({ onLogin }) {
 }
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  // Check authentication synchronously on initial render
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem(AUTH_STORAGE_KEY) === 'authenticated'
+  })
+  
   const [categories, setCategories] = useState([])
   const [types, setTypes] = useState([])
   const [phones, setPhones] = useState([])
@@ -154,15 +158,7 @@ function App() {
     image: '',
   })
 
-  // Check authentication on mount
-  useEffect(() => {
-    const authStatus = localStorage.getItem(AUTH_STORAGE_KEY)
-    if (authStatus === 'authenticated') {
-      setIsAuthenticated(true)
-    }
-  }, [])
-
-  // Fetch all data on mount (only if authenticated)
+  // Fetch all data when authenticated
   useEffect(() => {
     if (!isAuthenticated) {
       setLoading(false)
@@ -238,9 +234,15 @@ function App() {
     })
   }, [cart, products, isAuthenticated])
 
+  // Handle login - update state and localStorage
+  const handleLogin = () => {
+    localStorage.setItem(AUTH_STORAGE_KEY, 'authenticated')
+    setIsAuthenticated(true)
+  }
+
   // Show login page if not authenticated
   if (!isAuthenticated) {
-    return <Login onLogin={() => setIsAuthenticated(true)} />
+    return <Login onLogin={handleLogin} />
   }
 
   const productPhoneName = (product) =>
