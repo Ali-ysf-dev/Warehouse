@@ -206,22 +206,20 @@ function App() {
     fetchAll()
   }, [isAuthenticated])
 
-  // Show login page if not authenticated
-  if (!isAuthenticated) {
-    return <Login onLogin={() => setIsAuthenticated(true)} />
-  }
-
+  // All hooks must be called before any conditional returns
   const colors = useMemo(() => {
+    if (!isAuthenticated || !products.length) return []
     const set = new Set(products.map((p) => p.color))
     return Array.from(set)
-  }, [products])
+  }, [products, isAuthenticated])
 
   const filteredPhones = useMemo(() => {
-    if (!filters.typeId) return phones
+    if (!isAuthenticated || !filters.typeId) return phones
     return phones.filter((p) => p.typeId === filters.typeId)
-  }, [phones, filters.typeId])
+  }, [phones, filters.typeId, isAuthenticated])
 
   const filteredProducts = useMemo(() => {
+    if (!isAuthenticated) return []
     return products.filter((p) => {
       const matchCategory =
         !filters.categoryId || p.categoryId === filters.categoryId
@@ -230,7 +228,20 @@ function App() {
       const matchColor = !filters.color || p.color === filters.color
       return matchCategory && matchType && matchPhone && matchColor
     })
-  }, [products, filters])
+  }, [products, filters, isAuthenticated])
+
+  const cartItemsDetailed = useMemo(() => {
+    if (!isAuthenticated) return []
+    return cart.map((item) => {
+      const product = products.find((p) => p.id === item.productId)
+      return { ...item, product }
+    })
+  }, [cart, products, isAuthenticated])
+
+  // Show login page if not authenticated
+  if (!isAuthenticated) {
+    return <Login onLogin={() => setIsAuthenticated(true)} />
+  }
 
   const productPhoneName = (product) =>
     phones.find((ph) => ph.id === product.phoneId)?.name ?? 'Unknown'
@@ -386,13 +397,6 @@ function App() {
       alert('Error submitting cart: ' + err.message)
     }
   }
-
-  const cartItemsDetailed = useMemo(() => {
-    return cart.map((item) => {
-      const product = products.find((p) => p.id === item.productId)
-      return { ...item, product }
-    })
-  }, [cart, products])
 
   const phoneOptionsForType = (typeId) =>
     phones.filter((p) => p.typeId === typeId)
