@@ -408,6 +408,40 @@ function App() {
   const phoneOptionsForType = (typeId) =>
     phones.filter((p) => p.typeId === typeId)
 
+  const handleDeletePhone = async (phoneId, rowIndex) => {
+    if (!confirm('Delete this phone? This will also delete all products tied to this phone.'))
+      return
+    try {
+      const res = await fetch(`${API_BASE}/phones`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rowIndex }),
+      })
+      if (!res.ok) throw new Error('Failed to delete phone')
+
+      // Refresh phones from server to ensure consistency
+      const phonesRes = await fetch(`${API_BASE}/phones`)
+      if (phonesRes.ok) {
+        const updatedPhones = await phonesRes.json()
+        setPhones(updatedPhones)
+      }
+
+      // Remove products with this phone from local state
+      setProducts((prev) => prev.filter((p) => p.phoneId !== phoneId))
+
+      setFilters((f) => ({
+        ...f,
+        phoneId: f.phoneId === phoneId ? '' : f.phoneId,
+      }))
+      setProductForm((f) => ({
+        ...f,
+        phoneId: f.phoneId === phoneId ? '' : f.phoneId,
+      }))
+    } catch (err) {
+      alert('Error deleting phone: ' + err.message)
+    }
+  }
+
   const handleDeleteCategory = async (categoryId, rowIndex) => {
     if (!confirm('Delete this category? This will also delete all products in this category.'))
       return
@@ -419,8 +453,14 @@ function App() {
       })
       if (!res.ok) throw new Error('Failed to delete category')
 
-      // Remove from local state
-      setCategories((prev) => prev.filter((c) => c.id !== categoryId))
+      // Refresh categories from server to ensure consistency
+      const catsRes = await fetch(`${API_BASE}/categories`)
+      if (catsRes.ok) {
+        const updatedCats = await catsRes.json()
+        setCategories(updatedCats)
+      }
+
+      // Remove products with this category from local state
       setProducts((prev) => prev.filter((p) => p.categoryId !== categoryId))
 
       setFilters((f) => ({
@@ -451,8 +491,14 @@ function App() {
       })
       if (!res.ok) throw new Error('Failed to delete type')
 
-      // Remove from local state
-      setTypes((prev) => prev.filter((t) => t.id !== typeId))
+      // Refresh types from server to ensure consistency
+      const typesRes = await fetch(`${API_BASE}/types`)
+      if (typesRes.ok) {
+        const updatedTypes = await typesRes.json()
+        setTypes(updatedTypes)
+      }
+
+      // Remove phones and products with this type from local state
       setPhones((prev) => prev.filter((p) => p.typeId !== typeId))
       setProducts((prev) => prev.filter((p) => p.typeId !== typeId))
 
@@ -697,17 +743,28 @@ function App() {
             </aside>
           </main>
         ) : (
-          <main className="mt-8 grid gap-6 lg:grid-cols-2">
+          <main className="mt-8 space-y-6">
+            {/* Add Items Section */}
             <section
               className={cn(
-                'space-y-4 rounded-2xl p-6 shadow-lg ring-1 backdrop-blur',
+                'rounded-2xl p-6 shadow-lg ring-1 backdrop-blur',
                 surface,
               )}
             >
-              <h2 className="text-lg font-semibold">Manage lists</h2>
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="mb-6 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-100 dark:bg-sky-900/30">
+                  <span className="text-xl">➕</span>
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold">Add New Items</h2>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    Create categories, types, and phone models
+                  </p>
+                </div>
+              </div>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 <Panel
-                  title="Add product category"
+                  title="📦 Add Category"
                   description="Example: Case, Screen Protection"
                 >
                   <Input
@@ -717,19 +774,19 @@ function App() {
                     placeholder="Case"
                   />
                   <PrimaryButton onClick={handleAddCategory}>
-                    Add category
+                    ➕ Add Category
                   </PrimaryButton>
                 </Panel>
-                <Panel title="Add product type" description="Example: Apple, Samsung">
+                <Panel title="🏷️ Add Type" description="Example: Apple, Samsung">
                   <Input
                     label="Type name"
                     value={typeName}
                     onChange={setTypeName}
                     placeholder="Apple"
                   />
-                  <PrimaryButton onClick={handleAddType}>Add type</PrimaryButton>
+                  <PrimaryButton onClick={handleAddType}>➕ Add Type</PrimaryButton>
                 </Panel>
-                <Panel title="Add phone model" description="Tied to product type">
+                <Panel title="📱 Add Phone" description="Tied to product type">
                   <Select
                     label="Type"
                     value={phoneType}
@@ -743,69 +800,159 @@ function App() {
                     onChange={setPhoneName}
                     placeholder="iPhone 15"
                   />
-                  <PrimaryButton onClick={handleAddPhone}>Add phone</PrimaryButton>
+                  <PrimaryButton onClick={handleAddPhone}>➕ Add Phone</PrimaryButton>
                 </Panel>
               </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Panel title="Categories" description="Click delete to remove">
-                  <div className="space-y-2">
+            </section>
+
+            {/* Manage Existing Items Section */}
+            <section
+              className={cn(
+                'rounded-2xl p-6 shadow-lg ring-1 backdrop-blur',
+                surface,
+              )}
+            >
+              <div className="mb-6 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
+                  <span className="text-xl">📋</span>
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold">Manage Existing Items</h2>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    View and delete categories, types, and phones
+                  </p>
+                </div>
+              </div>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <Panel 
+                  title="📦 Categories" 
+                  description={`${categories.length} ${categories.length === 1 ? 'category' : 'categories'} available`}
+                >
+                  <div className="max-h-64 space-y-2 overflow-y-auto pr-2">
                     {categories.map((c) => (
                       <div
                         key={c.id}
-                        className="flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-800"
+                        className="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm transition-all hover:border-sky-300 hover:bg-sky-50 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-sky-600 dark:hover:bg-sky-900/20"
                       >
-                        <span className="font-medium">{c.name}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-base">📦</span>
+                          <span className="font-semibold text-slate-700 dark:text-slate-200">{c.name}</span>
+                        </div>
                         <button
                           onClick={() => handleDeleteCategory(c.id, c._rowIndex)}
-                          className="text-xs font-semibold text-rose-500 hover:text-rose-400"
+                          className="rounded-md px-3 py-1.5 text-xs font-semibold text-rose-600 transition-all hover:bg-rose-100 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-900/30 dark:hover:text-rose-300"
                         >
-                          Delete
+                          🗑️ Delete
                         </button>
                       </div>
                     ))}
                     {categories.length === 0 && (
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
-                        No categories yet.
-                      </p>
+                      <div className="rounded-lg border border-dashed border-slate-300 p-6 text-center dark:border-slate-700">
+                        <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                          No categories yet.
+                        </p>
+                        <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                          Add your first category above
+                        </p>
+                      </div>
                     )}
                   </div>
                 </Panel>
                 <Panel
-                  title="Product types"
-                  description="Deleting also removes phones and products tied to the type"
+                  title="🏷️ Product Types"
+                  description={`${types.length} ${types.length === 1 ? 'type' : 'types'} available`}
                 >
-                  <div className="space-y-2">
+                  <div className="max-h-64 space-y-2 overflow-y-auto pr-2">
                     {types.map((t) => (
                       <div
                         key={t.id}
-                        className="flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-800"
+                        className="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm transition-all hover:border-sky-300 hover:bg-sky-50 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-sky-600 dark:hover:bg-sky-900/20"
                       >
-                        <span className="font-medium">{t.name}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-base">🏷️</span>
+                          <span className="font-semibold text-slate-700 dark:text-slate-200">{t.name}</span>
+                        </div>
                         <button
                           onClick={() => handleDeleteType(t.id, t._rowIndex)}
-                          className="text-xs font-semibold text-rose-500 hover:text-rose-400"
+                          className="rounded-md px-3 py-1.5 text-xs font-semibold text-rose-600 transition-all hover:bg-rose-100 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-900/30 dark:hover:text-rose-300"
                         >
-                          Delete
+                          🗑️ Delete
                         </button>
                       </div>
                     ))}
                     {types.length === 0 && (
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
-                        No product types yet.
-                      </p>
+                      <div className="rounded-lg border border-dashed border-slate-300 p-6 text-center dark:border-slate-700">
+                        <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                          No product types yet.
+                        </p>
+                        <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                          Add your first type above
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </Panel>
+                <Panel
+                  title="📱 Phones"
+                  description={`${phones.length} ${phones.length === 1 ? 'phone' : 'phones'} available`}
+                >
+                  <div className="max-h-64 space-y-2 overflow-y-auto pr-2">
+                    {phones.map((p) => {
+                      const typeName = types.find((t) => t.id === p.typeId)?.name || 'Unknown'
+                      return (
+                        <div
+                          key={p.id}
+                          className="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm transition-all hover:border-sky-300 hover:bg-sky-50 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-sky-600 dark:hover:bg-sky-900/20"
+                        >
+                          <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-base">📱</span>
+                              <span className="font-semibold text-slate-700 dark:text-slate-200">{p.name}</span>
+                            </div>
+                            <span className="text-xs text-slate-500 dark:text-slate-400">Type: {typeName}</span>
+                          </div>
+                          <button
+                            onClick={() => handleDeletePhone(p.id, p._rowIndex)}
+                            className="rounded-md px-3 py-1.5 text-xs font-semibold text-rose-600 transition-all hover:bg-rose-100 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-900/30 dark:hover:text-rose-300"
+                          >
+                            🗑️ Delete
+                          </button>
+                        </div>
+                      )
+                    })}
+                    {phones.length === 0 && (
+                      <div className="rounded-lg border border-dashed border-slate-300 p-6 text-center dark:border-slate-700">
+                        <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                          No phones yet.
+                        </p>
+                        <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                          Add your first phone above
+                        </p>
+                      </div>
                     )}
                   </div>
                 </Panel>
               </div>
             </section>
 
+            {/* Add Product Section */}
             <section
               className={cn(
-                'space-y-4 rounded-2xl p-6 shadow-lg ring-1 backdrop-blur',
+                'rounded-2xl p-6 shadow-lg ring-1 backdrop-blur',
                 surface,
               )}
             >
-              <h2 className="text-lg font-semibold">Add product to inventory</h2>
+              <div className="mb-6 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30">
+                  <span className="text-xl">📦</span>
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold">Add Product to Inventory</h2>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    Create new products with all details
+                  </p>
+                </div>
+              </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <Input
                   label="Product name"
@@ -860,7 +1007,11 @@ function App() {
                   disabled={!productForm.typeId}
                 />
               </div>
-              <PrimaryButton onClick={handleAddProduct}>Add product</PrimaryButton>
+              <div className="sm:col-span-2">
+                <PrimaryButton onClick={handleAddProduct} className="w-full sm:w-auto">
+                  ➕ Add Product to Inventory
+                </PrimaryButton>
+              </div>
             </section>
           </main>
         )}
@@ -966,10 +1117,10 @@ function FilterSelect({
 
 function Panel({ title, description, children }) {
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-slate-200 p-4 shadow-sm dark:border-slate-800">
+    <div className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800/50">
       <div>
-        <p className="text-sm font-semibold">{title}</p>
-        <p className="text-xs text-slate-500 dark:text-slate-400">{description}</p>
+        <p className="text-base font-bold text-slate-800 dark:text-slate-100">{title}</p>
+        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{description}</p>
       </div>
       <div className="flex flex-col gap-3">{children}</div>
     </div>
@@ -1027,11 +1178,14 @@ function Select({
   )
 }
 
-function PrimaryButton({ children, onClick }) {
+function PrimaryButton({ children, onClick, className = '' }) {
   return (
     <button
       onClick={onClick}
-      className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-sky-500 hover:shadow"
+      className={cn(
+        'rounded-lg bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-sky-500 hover:shadow-md active:translate-y-0',
+        className,
+      )}
     >
       {children}
     </button>
