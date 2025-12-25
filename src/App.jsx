@@ -160,6 +160,9 @@ function App() {
     stock: '',
     image: '',
   })
+  const [imageUploading, setImageUploading] = useState(false)
+  const [imagePreview, setImagePreview] = useState('')
+  const fileInputRef = useRef(null)
 
   // Fetch all data when authenticated
   useEffect(() => {
