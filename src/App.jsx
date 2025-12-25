@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import { cn } from './lib/utils'
 
 const API_BASE = import.meta.env.VITE_API_BASE || '/api'
@@ -311,6 +311,68 @@ function App() {
     }
   }
 
+  const handleImageUpload = async (file) => {
+    if (!file) return
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file')
+      return
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Image size must be less than 10MB')
+      return
+    }
+
+    setImageUploading(true)
+    setImagePreview('')
+
+    try {
+      // Create FormData for Cloudinary upload
+      const formData = new FormData()
+      formData.append('file', file)
+      // Use unsigned upload preset - create one in Cloudinary Dashboard > Settings > Upload
+      // Set it to "Unsigned" and name it (e.g., 'warehouse_upload')
+      formData.append('upload_preset', 'warehouse_upload')
+      formData.append('cloud_name', 'dm8zmuzti')
+
+      // Upload to Cloudinary
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/dm8zmuzti/image/upload`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      )
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error?.message || 'Failed to upload image')
+      }
+
+      const data = await response.json()
+      const imageUrl = data.secure_url
+
+      // Set the image URL in the form
+      setProductForm((f) => ({ ...f, image: imageUrl }))
+      setImagePreview(imageUrl)
+    } catch (err) {
+      alert('Error uploading image: ' + err.message)
+      console.error('Upload error:', err)
+    } finally {
+      setImageUploading(false)
+    }
+  }
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      handleImageUpload(file)
+    }
+  }
+
   const handleAddProduct = async () => {
     const { name, categoryId, typeId, phoneId, color, stock, image } =
       productForm
@@ -341,6 +403,10 @@ function App() {
         stock: '',
         image: '',
       })
+      setImagePreview('')
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
     } catch (err) {
       alert('Error adding product: ' + err.message)
     }
@@ -989,12 +1055,69 @@ function App() {
                   onChange={(v) => setProductForm((f) => ({ ...f, color: v }))}
                   placeholder="Blue"
                 />
-                <Input
-                  label="Image URL"
-                  value={productForm.image}
-                  onChange={(v) => setProductForm((f) => ({ ...f, image: v }))}
-                  placeholder="https://..."
-                />
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                    Product Image
+                  </label>
+                  <div className="space-y-3">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      disabled={imageUploading}
+                      className="block w-full text-sm text-slate-500 file:mr-4 file:rounded-lg file:border-0 file:bg-sky-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-sky-500 disabled:opacity-50 dark:text-slate-400"
+                    />
+                    {imageUploading && (
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        Uploading image...
+                      </p>
+                    )}
+                    {imagePreview && (
+                      <div className="relative mt-2">
+                        <img
+                          src={imagePreview}
+                          alt="Preview"
+                          className="h-32 w-full rounded-lg border border-slate-200 object-cover dark:border-slate-700"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setImagePreview('')
+                            setProductForm((f) => ({ ...f, image: '' }))
+                            if (fileInputRef.current) {
+                              fileInputRef.current.value = ''
+                            }
+                          }}
+                          className="absolute right-2 top-2 rounded-md bg-rose-500 px-2 py-1 text-xs font-medium text-white transition-colors hover:bg-rose-600"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    )}
+                    {productForm.image && !imagePreview && (
+                      <div className="relative mt-2">
+                        <img
+                          src={productForm.image}
+                          alt="Current"
+                          className="h-32 w-full rounded-lg border border-slate-200 object-cover dark:border-slate-700"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setProductForm((f) => ({ ...f, image: '' }))
+                            if (fileInputRef.current) {
+                              fileInputRef.current.value = ''
+                            }
+                          }}
+                          className="absolute right-2 top-2 rounded-md bg-rose-500 px-2 py-1 text-xs font-medium text-white transition-colors hover:bg-rose-600"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
                 <Input
                   label="Stock amount"
                   type="number"
@@ -1039,72 +1162,74 @@ function App() {
           </main>
         )}
 
-        <section className="mt-8">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Products</h2>
-            <p className="text-sm text-slate-500 dark:text-slate-300">
-              Showing {filteredProducts.length} of {products.length}
-            </p>
-          </div>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredProducts.map((product) => (
-              <article
-                key={product.id}
-                className={cn(
-                  'flex flex-col overflow-hidden rounded-2xl shadow-lg ring-1 backdrop-blur transition hover:-translate-y-1 hover:shadow-xl',
-                  surface,
-                )}
-              >
-                <div className="relative h-40 w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="h-full w-full object-cover transition hover:scale-105"
-                  />
-                  <span className="absolute left-2 top-2 rounded-full bg-white/85 px-2 py-1 text-xs font-semibold text-slate-700 shadow-sm dark:bg-slate-800/85 dark:text-slate-100">
-                    {productCategoryName(product)}
-                  </span>
-                </div>
-                <div className="flex flex-1 flex-col gap-1 px-4 py-3">
-                  <h3 className="text-base font-semibold">{product.name}</h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-300">
-                    {productTypeName(product)} • {productPhoneName(product)}
-                  </p>
-                  <p className="text-sm text-slate-600 dark:text-slate-300">
-                    Color: {product.color}
-                  </p>
-                  <p
-                    className={cn(
-                      'text-sm font-semibold',
-                      product.stock > 0 ? 'text-emerald-500' : 'text-rose-400',
-                    )}
-                  >
-                    Available: {product.stock}
-                  </p>
-                  <div className="mt-auto flex gap-2 py-2">
-                    <button
-                      onClick={() => addToCart(product)}
-                      disabled={product.stock === 0}
+        {view === 'view' && (
+          <section className="mt-8">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">Products</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-300">
+                Showing {filteredProducts.length} of {products.length}
+              </p>
+            </div>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredProducts.map((product) => (
+                <article
+                  key={product.id}
+                  className={cn(
+                    'flex flex-col overflow-hidden rounded-2xl shadow-lg ring-1 backdrop-blur transition hover:-translate-y-1 hover:shadow-xl',
+                    surface,
+                  )}
+                >
+                  <div className="relative h-40 w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="h-full w-full object-cover transition hover:scale-105"
+                    />
+                    <span className="absolute left-2 top-2 rounded-full bg-white/85 px-2 py-1 text-xs font-semibold text-slate-700 shadow-sm dark:bg-slate-800/85 dark:text-slate-100">
+                      {productCategoryName(product)}
+                    </span>
+                  </div>
+                  <div className="flex flex-1 flex-col gap-1 px-4 py-3">
+                    <h3 className="text-base font-semibold">{product.name}</h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-300">
+                      {productTypeName(product)} • {productPhoneName(product)}
+                    </p>
+                    <p className="text-sm text-slate-600 dark:text-slate-300">
+                      Color: {product.color}
+                    </p>
+                    <p
                       className={cn(
-                        'flex-1 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm transition',
-                        product.stock === 0
-                          ? 'cursor-not-allowed bg-slate-200 text-slate-500 dark:bg-slate-800 dark:text-slate-500'
-                          : `${accent} hover:-translate-y-0.5 hover:shadow-lg`,
+                        'text-sm font-semibold',
+                        product.stock > 0 ? 'text-emerald-500' : 'text-rose-400',
                       )}
                     >
-                      {product.stock === 0 ? 'Out of stock' : 'Add to cart'}
-                    </button>
+                      Available: {product.stock}
+                    </p>
+                    <div className="mt-auto flex gap-2 py-2">
+                      <button
+                        onClick={() => addToCart(product)}
+                        disabled={product.stock === 0}
+                        className={cn(
+                          'flex-1 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm transition',
+                          product.stock === 0
+                            ? 'cursor-not-allowed bg-slate-200 text-slate-500 dark:bg-slate-800 dark:text-slate-500'
+                            : `${accent} hover:-translate-y-0.5 hover:shadow-lg`,
+                        )}
+                      >
+                        {product.stock === 0 ? 'Out of stock' : 'Add to cart'}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))}
-          </div>
-          {filteredProducts.length === 0 && (
-            <p className="mt-4 text-sm text-slate-500 dark:text-slate-300">
-              No products match filters.
-            </p>
-          )}
-        </section>
+                </article>
+              ))}
+            </div>
+            {filteredProducts.length === 0 && (
+              <p className="mt-4 text-sm text-slate-500 dark:text-slate-300">
+                No products match filters.
+              </p>
+            )}
+          </section>
+        )}
       </div>
     </div>
   )
