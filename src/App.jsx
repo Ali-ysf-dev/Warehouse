@@ -131,7 +131,10 @@ function App() {
   const [types, setTypes] = useState([])
   const [phones, setPhones] = useState([])
   const [products, setProducts] = useState([])
-  const [loading, setLoading] = useState(false)
+  // Initialize loading based on authentication status
+  const [loading, setLoading] = useState(() => {
+    return localStorage.getItem(AUTH_STORAGE_KEY) === 'authenticated'
+  })
   const [error, setError] = useState(null)
   const [darkMode, setDarkMode] = useState(true)
   const [view, setView] = useState('view')
@@ -165,9 +168,11 @@ function App() {
       return
     }
 
+    // Set loading to true immediately when authenticated
+    setLoading(true)
+    setError(null)
+
     const fetchAll = async () => {
-      setLoading(true)
-      setError(null)
       try {
         const [catsRes, typesRes, phonesRes, productsRes] = await Promise.all([
           fetch(`${API_BASE}/categories`),
