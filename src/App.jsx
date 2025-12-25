@@ -27,7 +27,7 @@ function Login({ onLogin }) {
       localStorage.setItem(AUTH_STORAGE_KEY, 'authenticated')
       onLogin() // This will trigger re-render and show the main app
     } else {
-      setError('Invalid username or password')
+      setError('Ungültiger Benutzername oder Passwort')
       setPassword('')
     }
   }
@@ -53,11 +53,11 @@ function Login({ onLogin }) {
         >
           <div className="mb-6 text-center">
             <p className="text-xs font-semibold uppercase tracking-wide text-cyan-400 dark:text-cyan-300">
-              Warehouse Management
+              Lagerverwaltung
             </p>
-            <h1 className="mt-2 text-3xl font-bold">Login</h1>
+            <h1 className="mt-2 text-3xl font-bold">Anmelden</h1>
             <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-              Enter your credentials to access the system
+              Geben Sie Ihre Anmeldedaten ein, um auf das System zuzugreifen
             </p>
           </div>
 
@@ -67,7 +67,7 @@ function Login({ onLogin }) {
                 htmlFor="username"
                 className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200"
               >
-                Username
+                Benutzername
               </label>
               <input
                 id="username"
@@ -75,7 +75,7 @@ function Login({ onLogin }) {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:ring-cyan-400"
-                placeholder="Enter username"
+                placeholder="Benutzername eingeben"
                 required
                 autoFocus
               />
@@ -86,7 +86,7 @@ function Login({ onLogin }) {
                 htmlFor="password"
                 className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200"
               >
-                Password
+                Passwort
               </label>
               <input
                 id="password"
@@ -94,7 +94,7 @@ function Login({ onLogin }) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:ring-cyan-400"
-                placeholder="Enter password"
+                placeholder="Passwort eingeben"
                 required
               />
             </div>
@@ -112,7 +112,7 @@ function Login({ onLogin }) {
                 accent,
               )}
             >
-              Sign In
+              Anmelden
             </button>
           </form>
         </div>
@@ -255,13 +255,13 @@ function App() {
   }
 
   const productPhoneName = (product) =>
-    phones.find((ph) => ph.id === product.phoneId)?.name ?? 'Unknown'
+    phones.find((ph) => ph.id === product.phoneId)?.name ?? 'Unbekannt'
 
   const productTypeName = (product) =>
-    types.find((t) => t.id === product.typeId)?.name ?? 'Unknown'
+    types.find((t) => t.id === product.typeId)?.name ?? 'Unbekannt'
 
   const productCategoryName = (product) =>
-    categories.find((c) => c.id === product.categoryId)?.name ?? 'Unknown'
+    categories.find((c) => c.id === product.categoryId)?.name ?? 'Unbekannt'
 
   const handleAddCategory = async () => {
     if (!categoryName.trim()) return
@@ -320,13 +320,13 @@ function App() {
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      alert('Please select an image file')
+      alert('Bitte wählen Sie eine Bilddatei aus')
       return
     }
 
     // Validate file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
-      alert('Image size must be less than 10MB')
+      alert('Die Bildgröße muss weniger als 10 MB betragen')
       return
     }
 
@@ -478,7 +478,7 @@ function App() {
     phones.filter((p) => p.typeId === typeId)
 
   const handleDeletePhone = async (phoneId, rowIndex) => {
-    if (!confirm('Delete this phone? This will also delete all products tied to this phone.'))
+    if (!confirm('Dieses Telefon löschen? Dies wird auch alle Produkte löschen, die diesem Telefon zugeordnet sind.'))
       return
     try {
       const res = await fetch(`${API_BASE}/phones`, {
@@ -512,7 +512,7 @@ function App() {
   }
 
   const handleDeleteProduct = async (productId, rowIndex) => {
-    if (!confirm('Are you sure you want to delete this product?'))
+    if (!confirm('Sind Sie sicher, dass Sie dieses Produkt löschen möchten?'))
       return
     try {
       const res = await fetch(`${API_BASE}/products`, {
@@ -537,7 +537,7 @@ function App() {
   }
 
   const handleDeleteCategory = async (categoryId, rowIndex) => {
-    if (!confirm('Delete this category? This will also delete all products in this category.'))
+    if (!confirm('Diese Kategorie löschen? Dies wird auch alle Produkte in dieser Kategorie löschen.'))
       return
     try {
       const res = await fetch(`${API_BASE}/categories`, {
@@ -573,7 +573,7 @@ function App() {
   const handleDeleteType = async (typeId, rowIndex) => {
     if (
       !confirm(
-        'Delete this product type? This will also delete all phones and products tied to this type.',
+        'Diesen Produkttyp löschen? Dies wird auch alle Telefone und Produkte löschen, die diesem Typ zugeordnet sind.',
       )
     )
       return
@@ -636,8 +636,8 @@ function App() {
         )}
       >
         <div className="text-center">
-          <p className="text-lg font-medium text-slate-600 dark:text-slate-300">Loading...</p>
-          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Please wait while we fetch your data</p>
+          <p className="text-lg font-medium text-slate-600 dark:text-slate-300">Laden...</p>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Bitte warten Sie, während wir Ihre Daten abrufen</p>
         </div>
       </div>
     )
@@ -653,10 +653,10 @@ function App() {
       >
         <div className="text-center">
           <p className="text-lg font-semibold text-rose-600 dark:text-rose-400">
-            Error: {error}
+            Fehler: {error}
           </p>
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-            Please check your API configuration and Google Sheets setup.
+            Bitte überprüfen Sie Ihre API-Konfiguration und die Google Sheets-Einrichtung.
           </p>
         </div>
       </div>
@@ -676,13 +676,13 @@ function App() {
         <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-cyan-400 dark:text-cyan-300">
-              Inventory & Storefront
+              Lagerbestand & Shop
             </p>
             <h1 className="text-3xl font-bold sm:text-4xl">
-              Phone Accessories Store
+              Handy-Zubehör Shop
             </h1>
             <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
-              Manage inventory and browse products with filters and cart.
+              Lagerbestand verwalten und Produkte mit Filtern und Warenkorb durchsuchen.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -695,7 +695,7 @@ function App() {
               )}
               onClick={() => setView('view')}
             >
-              View Products
+              Produkte anzeigen
             </button>
             <button
               className={cn(
@@ -706,13 +706,13 @@ function App() {
               )}
               onClick={() => setView('manage')}
             >
-              Management
+              Verwaltung
             </button>
             <button
               className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
               onClick={() => setDarkMode((d) => !d)}
             >
-              {darkMode ? 'Light mode' : 'Dark mode'}
+              {darkMode ? 'Hellmodus' : 'Dunkelmodus'}
             </button>
           </div>
         </header>
@@ -725,16 +725,16 @@ function App() {
                 surface,
               )}
             >
-              <h2 className="text-lg font-semibold">Filters</h2>
+              <h2 className="text-lg font-semibold">Filter</h2>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <FilterSelect
-                  label="Product Category"
+                  label="Produktkategorie"
                   value={filters.categoryId}
                   onChange={(v) => setFilters((f) => ({ ...f, categoryId: v }))}
                   options={categories.map((c) => ({ value: c.id, label: c.name }))}
                 />
                 <FilterSelect
-                  label="Product Type"
+                  label="Produkttyp"
                   value={filters.typeId}
                   onChange={(v) =>
                     setFilters((f) => ({
@@ -746,7 +746,7 @@ function App() {
                   options={types.map((t) => ({ value: t.id, label: t.name }))}
                 />
                 <FilterSelect
-                  label="Phone Name"
+                  label="Telefonname"
                   value={filters.phoneId}
                   onChange={(v) => setFilters((f) => ({ ...f, phoneId: v }))}
                   options={filteredPhones.map((p) => ({
@@ -754,12 +754,12 @@ function App() {
                     label: p.name,
                   }))}
                   placeholder={
-                    filters.typeId ? 'Select phone' : 'Choose type first'
+                    filters.typeId ? 'Telefon auswählen' : 'Zuerst Typ auswählen'
                   }
                   disabled={!filters.typeId}
                 />
                 <FilterSelect
-                  label="Color"
+                  label="Farbe"
                   value={filters.color}
                   onChange={(v) => setFilters((f) => ({ ...f, color: v }))}
                   options={colors.map((c) => ({ value: c, label: c }))}
@@ -772,7 +772,7 @@ function App() {
                   }
                   className="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-50 dark:text-slate-200 dark:ring-slate-700 dark:hover:bg-slate-800"
                 >
-                  Clear filters
+                  Filter zurücksetzen
                 </button>
               </div>
             </section>
@@ -783,10 +783,10 @@ function App() {
                 surface,
               )}
             >
-              <h2 className="text-lg font-semibold">Cart</h2>
+              <h2 className="text-lg font-semibold">Warenkorb</h2>
               {cartItemsDetailed.length === 0 ? (
                 <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
-                  Cart is empty.
+                  Warenkorb ist leer.
                 </p>
               ) : (
                 <div className="mt-4 space-y-4">
@@ -797,10 +797,10 @@ function App() {
                     >
       <div>
                         <p className="text-sm font-semibold">
-                          {item.product?.name ?? 'Unknown'}
+                          {item.product?.name ?? 'Unbekannt'}
                         </p>
                         <p className="text-xs text-slate-500 dark:text-slate-400">
-                          Stock: {item.product?.stock ?? 0}
+                          Bestand: {item.product?.stock ?? 0}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -818,7 +818,7 @@ function App() {
                           onClick={() => updateCartQty(item.productId, 0)}
                           className="rounded px-2 py-1 text-xs font-medium text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20"
                         >
-                          Remove
+                          Entfernen
                         </button>
                       </div>
                     </div>
@@ -830,7 +830,7 @@ function App() {
                       accent,
                     )}
                   >
-                    Submit cart & update inventory
+                    Warenkorb absenden & Bestand aktualisieren
                   </button>
                 </div>
               )}
@@ -846,10 +846,10 @@ function App() {
             >
               <div className="mb-8 border-b border-slate-200 pb-6 dark:border-slate-700">
                 <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
-                  Database Management
+                  Datenbankverwaltung
                 </h2>
                 <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-                  Manage categories, product types, and phone models
+                  Kategorien, Produkttypen und Telefonmodelle verwalten
                 </p>
               </div>
 
@@ -858,55 +858,55 @@ function App() {
                 <div className="space-y-6">
                   <div>
                     <h3 className="mb-4 text-lg font-semibold text-slate-800 dark:text-slate-200">
-                      Add New Items
+                      Neue Elemente hinzufügen
                     </h3>
                     <div className="space-y-4">
                       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/50">
                         <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                          Add Category
+                          Kategorie hinzufügen
                         </label>
                         <p className="mb-3 text-xs text-slate-500 dark:text-slate-400">
-                          Example: Case, Screen Protection
+                          Beispiel: Hülle, Bildschirmschutz
                         </p>
                         <div className="flex gap-2">
                           <Input
                             label=""
                             value={categoryName}
                             onChange={setCategoryName}
-                            placeholder="Category name"
+                            placeholder="Kategoriename"
                           />
                           <PrimaryButton onClick={handleAddCategory} className="shrink-0">
-                            Add
+                            Hinzufügen
                           </PrimaryButton>
                         </div>
                       </div>
 
                       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/50">
                         <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                          Add Product Type
+                          Produkttyp hinzufügen
                         </label>
                         <p className="mb-3 text-xs text-slate-500 dark:text-slate-400">
-                          Example: Apple, Samsung
+                          Beispiel: Apple, Samsung
                         </p>
                         <div className="flex gap-2">
                           <Input
                             label=""
                             value={typeName}
                             onChange={setTypeName}
-                            placeholder="Type name"
+                            placeholder="Typname"
                           />
                           <PrimaryButton onClick={handleAddType} className="shrink-0">
-                            Add
+                            Hinzufügen
                           </PrimaryButton>
                         </div>
                       </div>
 
                       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/50">
                         <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                          Add Phone Model
+                          Telefonmodell hinzufügen
                         </label>
                         <p className="mb-3 text-xs text-slate-500 dark:text-slate-400">
-                          Select a product type first
+                          Zuerst einen Produkttyp auswählen
                         </p>
                         <div className="space-y-3">
                           <Select
@@ -914,17 +914,17 @@ function App() {
                             value={phoneType}
                             onChange={setPhoneType}
                             options={types}
-                            placeholder="Select type"
+                            placeholder="Typ auswählen"
                           />
                           <div className="flex gap-2">
                             <Input
                               label=""
                               value={phoneName}
                               onChange={setPhoneName}
-                              placeholder="Phone name"
+                              placeholder="Telefonname"
                             />
                             <PrimaryButton onClick={handleAddPhone} className="shrink-0">
-                              Add
+                              Hinzufügen
                             </PrimaryButton>
                           </div>
                         </div>
@@ -937,13 +937,13 @@ function App() {
                 <div className="space-y-6">
                   <div>
                     <h3 className="mb-4 text-lg font-semibold text-slate-800 dark:text-slate-200">
-                      Manage Existing Items
+                      Vorhandene Elemente verwalten
                     </h3>
                     <div className="space-y-4">
                       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/50">
                         <div className="mb-3 flex items-center justify-between">
                           <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                            Categories
+                            Kategorien
                           </label>
                           <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
                             {categories.length}
@@ -962,13 +962,13 @@ function App() {
                                 onClick={() => handleDeleteCategory(c.id, c._rowIndex)}
                                 className="rounded px-2 py-1 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-900/30 dark:hover:text-rose-300"
                               >
-                                Delete
+                                Löschen
                               </button>
                             </div>
                           ))}
                           {categories.length === 0 && (
                             <p className="py-4 text-center text-xs text-slate-500 dark:text-slate-400">
-                              No categories yet
+                              Noch keine Kategorien
                             </p>
                           )}
                         </div>
@@ -977,7 +977,7 @@ function App() {
                       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/50">
                         <div className="mb-3 flex items-center justify-between">
                           <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                            Product Types
+                            Produkttypen
                           </label>
                           <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
                             {types.length}
@@ -996,13 +996,13 @@ function App() {
                                 onClick={() => handleDeleteType(t.id, t._rowIndex)}
                                 className="rounded px-2 py-1 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-900/30 dark:hover:text-rose-300"
                               >
-                                Delete
+                                Löschen
                               </button>
                             </div>
                           ))}
                           {types.length === 0 && (
                             <p className="py-4 text-center text-xs text-slate-500 dark:text-slate-400">
-                              No product types yet
+                              Noch keine Produkttypen
                             </p>
                           )}
                         </div>
@@ -1011,7 +1011,7 @@ function App() {
                       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/50">
                         <div className="mb-3 flex items-center justify-between">
                           <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                            Phones
+                            Telefone
                           </label>
                           <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
                             {phones.length}
@@ -1019,7 +1019,7 @@ function App() {
                         </div>
                         <div className="max-h-48 space-y-2 overflow-y-auto">
                           {phones.map((p) => {
-                            const typeName = types.find((t) => t.id === p.typeId)?.name || 'Unknown'
+                            const typeName = types.find((t) => t.id === p.typeId)?.name || 'Unbekannt'
                             return (
                               <div
                                 key={p.id}
@@ -1037,14 +1037,14 @@ function App() {
                                   onClick={() => handleDeletePhone(p.id, p._rowIndex)}
                                   className="rounded px-2 py-1 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-900/30 dark:hover:text-rose-300"
                                 >
-                                  Delete
+                                  Löschen
                                 </button>
                               </div>
                             )
                           })}
                           {phones.length === 0 && (
                             <p className="py-4 text-center text-xs text-slate-500 dark:text-slate-400">
-                              No phones yet
+                              Noch keine Telefone
                             </p>
                           )}
                         </div>
@@ -1063,29 +1063,29 @@ function App() {
             >
               <div className="mb-8 border-b border-slate-200 pb-6 dark:border-slate-700">
                 <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
-                  Add Product to Inventory
+                  Produkt zum Lagerbestand hinzufügen
                 </h2>
                 <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-                  Create new products with complete details
+                  Neue Produkte mit vollständigen Details erstellen
                 </p>
               </div>
 
               <div className="grid gap-6 sm:grid-cols-2">
                 <Input
-                  label="Product name"
+                  label="Produktname"
                   value={productForm.name}
                   onChange={(v) => setProductForm((f) => ({ ...f, name: v }))}
-                  placeholder="Protective Case"
+                  placeholder="Schutzhülle"
                 />
                 <Input
-                  label="Color"
+                  label="Farbe"
                   value={productForm.color}
                   onChange={(v) => setProductForm((f) => ({ ...f, color: v }))}
-                  placeholder="Blue"
+                  placeholder="Blau"
                 />
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-medium text-slate-700 dark:text-slate-200">
-                    Product Image
+                    Produktbild
                   </label>
                   <div className="space-y-3">
                     <input
@@ -1098,14 +1098,14 @@ function App() {
                     />
                     {imageUploading && (
                       <p className="text-xs text-slate-500 dark:text-slate-400">
-                        Uploading image...
+                        Bild wird hochgeladen...
                       </p>
                     )}
                     {imagePreview && (
                       <div className="relative mt-2">
                         <img
                           src={imagePreview}
-                          alt="Preview"
+                          alt="Vorschau"
                           className="h-32 w-full rounded-lg border border-slate-200 object-cover dark:border-slate-700"
                         />
                         <button
@@ -1119,7 +1119,7 @@ function App() {
                           }}
                           className="absolute right-2 top-2 rounded-md bg-rose-500 px-2 py-1 text-xs font-medium text-white transition-colors hover:bg-rose-600"
                         >
-                          Remove
+                          Entfernen
                         </button>
                       </div>
                     )}
@@ -1127,7 +1127,7 @@ function App() {
                       <div className="relative mt-2">
                         <img
                           src={productForm.image}
-                          alt="Current"
+                          alt="Aktuell"
                           className="h-32 w-full rounded-lg border border-slate-200 object-cover dark:border-slate-700"
                         />
                         <button
@@ -1140,14 +1140,14 @@ function App() {
                           }}
                           className="absolute right-2 top-2 rounded-md bg-rose-500 px-2 py-1 text-xs font-medium text-white transition-colors hover:bg-rose-600"
                         >
-                          Remove
+                          Entfernen
                         </button>
                       </div>
                     )}
                   </div>
                 </div>
                 <Input
-                  label="Stock amount"
+                  label="Bestandsmenge"
                   type="number"
                   min={0}
                   value={productForm.stock}
@@ -1155,35 +1155,35 @@ function App() {
                   placeholder="10"
                 />
                 <Select
-                  label="Category"
+                  label="Kategorie"
                   value={productForm.categoryId}
                   onChange={(v) => setProductForm((f) => ({ ...f, categoryId: v }))}
                   options={categories}
-                  placeholder="Select category"
+                  placeholder="Kategorie auswählen"
                 />
                 <Select
-                  label="Product type"
+                  label="Produkttyp"
                   value={productForm.typeId}
                   onChange={(v) =>
                     setProductForm((f) => ({ ...f, typeId: v, phoneId: '' }))
                   }
                   options={types}
-                  placeholder="Select type"
+                  placeholder="Typ auswählen"
                 />
                 <Select
-                  label="Phone name"
+                  label="Telefonname"
                   value={productForm.phoneId}
                   onChange={(v) => setProductForm((f) => ({ ...f, phoneId: v }))}
                   options={phoneOptionsForType(productForm.typeId)}
                   placeholder={
-                    productForm.typeId ? 'Select phone' : 'Choose type first'
+                    productForm.typeId ? 'Telefon auswählen' : 'Zuerst Typ auswählen'
                   }
                   disabled={!productForm.typeId}
                 />
               </div>
               <div className="mt-6">
                 <PrimaryButton onClick={handleAddProduct} className="w-full sm:w-auto">
-                  Add Product to Inventory
+                  Produkt zum Lagerbestand hinzufügen
                 </PrimaryButton>
               </div>
             </section>
@@ -1193,9 +1193,9 @@ function App() {
         {view === 'view' && (
           <section className="mt-8">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Products</h2>
+              <h2 className="text-xl font-semibold">Produkte</h2>
               <p className="text-sm text-slate-500 dark:text-slate-300">
-                Showing {filteredProducts.length} of {products.length}
+                Zeige {filteredProducts.length} von {products.length}
               </p>
             </div>
             <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -1225,9 +1225,9 @@ function App() {
                         handleDeleteProduct(product.id, product._rowIndex)
                       }}
                       className="absolute right-2 top-2 rounded-md bg-rose-500 px-2 py-1 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-rose-600 dark:bg-rose-600 dark:hover:bg-rose-700"
-                      title="Delete product"
+                      title="Produkt löschen"
                     >
-                      Delete
+                      Löschen
                     </button>
                   </div>
                   <div className="flex flex-1 flex-col gap-1 px-4 py-3">
@@ -1236,7 +1236,7 @@ function App() {
                       {productTypeName(product)} • {productPhoneName(product)}
                     </p>
                     <p className="text-sm text-slate-600 dark:text-slate-300">
-                      Color: {product.color}
+                      Farbe: {product.color}
                     </p>
                     <p
                       className={cn(
@@ -1244,7 +1244,7 @@ function App() {
                         product.stock > 0 ? 'text-emerald-500' : 'text-rose-400',
                       )}
                     >
-                      Available: {product.stock}
+                      Verfügbar: {product.stock}
                     </p>
                     <div className="mt-auto flex gap-2 py-2">
                       <button
@@ -1257,7 +1257,7 @@ function App() {
                             : `${accent} hover:-translate-y-0.5 hover:shadow-lg`,
                         )}
                       >
-                        {product.stock === 0 ? 'Out of stock' : 'Add to cart'}
+                        {product.stock === 0 ? 'Nicht vorrätig' : 'Zum Warenkorb hinzufügen'}
                       </button>
                     </div>
                   </div>
@@ -1266,7 +1266,7 @@ function App() {
             </div>
             {filteredProducts.length === 0 && (
               <p className="mt-4 text-sm text-slate-500 dark:text-slate-300">
-                No products match filters.
+                Keine Produkte entsprechen den Filtern.
               </p>
             )}
           </section>
@@ -1288,7 +1288,7 @@ function App() {
               <button
                 onClick={() => setSelectedProduct(null)}
                 className="absolute right-4 top-4 z-10 rounded-full bg-white/90 p-2 text-slate-700 shadow-lg transition-colors hover:bg-white dark:bg-slate-800/90 dark:text-slate-200 dark:hover:bg-slate-800"
-                aria-label="Close"
+                aria-label="Schließen"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -1379,7 +1379,7 @@ function FilterSelect({
   value,
   onChange,
   options,
-  placeholder = 'All',
+                  placeholder = 'Alle',
   disabled = false,
 }) {
   return (
@@ -1442,7 +1442,7 @@ function Select({
   value,
   onChange,
   options,
-  placeholder = 'Select an option',
+  placeholder = 'Option auswählen',
   disabled = false,
 }) {
   return (
