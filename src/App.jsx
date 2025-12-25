@@ -743,217 +743,240 @@ function App() {
             </aside>
           </main>
         ) : (
-          <main className="mt-8 space-y-6">
-            {/* Add Items Section */}
+          <main className="mt-8 space-y-8">
+            {/* Database Management Section */}
             <section
               className={cn(
-                'rounded-2xl p-6 shadow-lg ring-1 backdrop-blur',
-                surface,
+                'rounded-2xl border border-slate-200/60 bg-gradient-to-br from-slate-50 to-white p-8 shadow-xl backdrop-blur-sm dark:border-slate-700/60 dark:from-slate-900/50 dark:to-slate-800/50',
               )}
             >
-              <div className="mb-6 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-100 dark:bg-sky-900/30">
-                  <span className="text-xl">➕</span>
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold">Add New Items</h2>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
-                    Create categories, types, and phone models
-                  </p>
-                </div>
+              <div className="mb-8 border-b border-slate-200 pb-6 dark:border-slate-700">
+                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+                  Database Management
+                </h2>
+                <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                  Manage categories, product types, and phone models
+                </p>
               </div>
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                <Panel
-                  title="📦 Add Category"
-                  description="Example: Case, Screen Protection"
-                >
-                  <Input
-                    label="Category name"
-                    value={categoryName}
-                    onChange={setCategoryName}
-                    placeholder="Case"
-                  />
-                  <PrimaryButton onClick={handleAddCategory}>
-                    ➕ Add Category
-                  </PrimaryButton>
-                </Panel>
-                <Panel title="🏷️ Add Type" description="Example: Apple, Samsung">
-                  <Input
-                    label="Type name"
-                    value={typeName}
-                    onChange={setTypeName}
-                    placeholder="Apple"
-                  />
-                  <PrimaryButton onClick={handleAddType}>➕ Add Type</PrimaryButton>
-                </Panel>
-                <Panel title="📱 Add Phone" description="Tied to product type">
-                  <Select
-                    label="Type"
-                    value={phoneType}
-                    onChange={setPhoneType}
-                    options={types}
-                    placeholder="Select type"
-                  />
-                  <Input
-                    label="Phone name"
-                    value={phoneName}
-                    onChange={setPhoneName}
-                    placeholder="iPhone 15"
-                  />
-                  <PrimaryButton onClick={handleAddPhone}>➕ Add Phone</PrimaryButton>
-                </Panel>
-              </div>
-            </section>
 
-            {/* Manage Existing Items Section */}
-            <section
-              className={cn(
-                'rounded-2xl p-6 shadow-lg ring-1 backdrop-blur',
-                surface,
-              )}
-            >
-              <div className="mb-6 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
-                  <span className="text-xl">📋</span>
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold">Manage Existing Items</h2>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
-                    View and delete categories, types, and phones
-                  </p>
-                </div>
-              </div>
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                <Panel 
-                  title="📦 Categories" 
-                  description={`${categories.length} ${categories.length === 1 ? 'category' : 'categories'} available`}
-                >
-                  <div className="max-h-64 space-y-2 overflow-y-auto pr-2">
-                    {categories.map((c) => (
-                      <div
-                        key={c.id}
-                        className="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm transition-all hover:border-sky-300 hover:bg-sky-50 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-sky-600 dark:hover:bg-sky-900/20"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="text-base">📦</span>
-                          <span className="font-semibold text-slate-700 dark:text-slate-200">{c.name}</span>
+              <div className="grid gap-8 lg:grid-cols-2">
+                {/* Add Forms */}
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="mb-4 text-lg font-semibold text-slate-800 dark:text-slate-200">
+                      Add New Items
+                    </h3>
+                    <div className="space-y-4">
+                      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/50">
+                        <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                          Add Category
+                        </label>
+                        <p className="mb-3 text-xs text-slate-500 dark:text-slate-400">
+                          Example: Case, Screen Protection
+                        </p>
+                        <div className="flex gap-2">
+                          <Input
+                            label=""
+                            value={categoryName}
+                            onChange={setCategoryName}
+                            placeholder="Category name"
+                          />
+                          <PrimaryButton onClick={handleAddCategory} className="shrink-0">
+                            Add
+                          </PrimaryButton>
                         </div>
-                        <button
-                          onClick={() => handleDeleteCategory(c.id, c._rowIndex)}
-                          className="rounded-md px-3 py-1.5 text-xs font-semibold text-rose-600 transition-all hover:bg-rose-100 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-900/30 dark:hover:text-rose-300"
-                        >
-                          🗑️ Delete
-                        </button>
                       </div>
-                    ))}
-                    {categories.length === 0 && (
-                      <div className="rounded-lg border border-dashed border-slate-300 p-6 text-center dark:border-slate-700">
-                        <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                          No categories yet.
+
+                      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/50">
+                        <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                          Add Product Type
+                        </label>
+                        <p className="mb-3 text-xs text-slate-500 dark:text-slate-400">
+                          Example: Apple, Samsung
                         </p>
-                        <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
-                          Add your first category above
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </Panel>
-                <Panel
-                  title="🏷️ Product Types"
-                  description={`${types.length} ${types.length === 1 ? 'type' : 'types'} available`}
-                >
-                  <div className="max-h-64 space-y-2 overflow-y-auto pr-2">
-                    {types.map((t) => (
-                      <div
-                        key={t.id}
-                        className="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm transition-all hover:border-sky-300 hover:bg-sky-50 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-sky-600 dark:hover:bg-sky-900/20"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="text-base">🏷️</span>
-                          <span className="font-semibold text-slate-700 dark:text-slate-200">{t.name}</span>
+                        <div className="flex gap-2">
+                          <Input
+                            label=""
+                            value={typeName}
+                            onChange={setTypeName}
+                            placeholder="Type name"
+                          />
+                          <PrimaryButton onClick={handleAddType} className="shrink-0">
+                            Add
+                          </PrimaryButton>
                         </div>
-                        <button
-                          onClick={() => handleDeleteType(t.id, t._rowIndex)}
-                          className="rounded-md px-3 py-1.5 text-xs font-semibold text-rose-600 transition-all hover:bg-rose-100 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-900/30 dark:hover:text-rose-300"
-                        >
-                          🗑️ Delete
-                        </button>
                       </div>
-                    ))}
-                    {types.length === 0 && (
-                      <div className="rounded-lg border border-dashed border-slate-300 p-6 text-center dark:border-slate-700">
-                        <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                          No product types yet.
+
+                      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/50">
+                        <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                          Add Phone Model
+                        </label>
+                        <p className="mb-3 text-xs text-slate-500 dark:text-slate-400">
+                          Select a product type first
                         </p>
-                        <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
-                          Add your first type above
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </Panel>
-                <Panel
-                  title="📱 Phones"
-                  description={`${phones.length} ${phones.length === 1 ? 'phone' : 'phones'} available`}
-                >
-                  <div className="max-h-64 space-y-2 overflow-y-auto pr-2">
-                    {phones.map((p) => {
-                      const typeName = types.find((t) => t.id === p.typeId)?.name || 'Unknown'
-                      return (
-                        <div
-                          key={p.id}
-                          className="group flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm transition-all hover:border-sky-300 hover:bg-sky-50 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-sky-600 dark:hover:bg-sky-900/20"
-                        >
-                          <div className="flex flex-col gap-1">
-                            <div className="flex items-center gap-2">
-                              <span className="text-base">📱</span>
-                              <span className="font-semibold text-slate-700 dark:text-slate-200">{p.name}</span>
-                            </div>
-                            <span className="text-xs text-slate-500 dark:text-slate-400">Type: {typeName}</span>
+                        <div className="space-y-3">
+                          <Select
+                            label=""
+                            value={phoneType}
+                            onChange={setPhoneType}
+                            options={types}
+                            placeholder="Select type"
+                          />
+                          <div className="flex gap-2">
+                            <Input
+                              label=""
+                              value={phoneName}
+                              onChange={setPhoneName}
+                              placeholder="Phone name"
+                            />
+                            <PrimaryButton onClick={handleAddPhone} className="shrink-0">
+                              Add
+                            </PrimaryButton>
                           </div>
-                          <button
-                            onClick={() => handleDeletePhone(p.id, p._rowIndex)}
-                            className="rounded-md px-3 py-1.5 text-xs font-semibold text-rose-600 transition-all hover:bg-rose-100 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-900/30 dark:hover:text-rose-300"
-                          >
-                            🗑️ Delete
-                          </button>
                         </div>
-                      )
-                    })}
-                    {phones.length === 0 && (
-                      <div className="rounded-lg border border-dashed border-slate-300 p-6 text-center dark:border-slate-700">
-                        <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                          No phones yet.
-                        </p>
-                        <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
-                          Add your first phone above
-                        </p>
                       </div>
-                    )}
+                    </div>
                   </div>
-                </Panel>
+                </div>
+
+                {/* Manage Lists */}
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="mb-4 text-lg font-semibold text-slate-800 dark:text-slate-200">
+                      Manage Existing Items
+                    </h3>
+                    <div className="space-y-4">
+                      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/50">
+                        <div className="mb-3 flex items-center justify-between">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                            Categories
+                          </label>
+                          <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                            {categories.length}
+                          </span>
+                        </div>
+                        <div className="max-h-48 space-y-2 overflow-y-auto">
+                          {categories.map((c) => (
+                            <div
+                              key={c.id}
+                              className="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm transition-colors hover:border-slate-300 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-slate-600 dark:hover:bg-slate-700/50"
+                            >
+                              <span className="font-medium text-slate-700 dark:text-slate-200">
+                                {c.name}
+                              </span>
+                              <button
+                                onClick={() => handleDeleteCategory(c.id, c._rowIndex)}
+                                className="rounded px-2 py-1 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-900/30 dark:hover:text-rose-300"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          ))}
+                          {categories.length === 0 && (
+                            <p className="py-4 text-center text-xs text-slate-500 dark:text-slate-400">
+                              No categories yet
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/50">
+                        <div className="mb-3 flex items-center justify-between">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                            Product Types
+                          </label>
+                          <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                            {types.length}
+                          </span>
+                        </div>
+                        <div className="max-h-48 space-y-2 overflow-y-auto">
+                          {types.map((t) => (
+                            <div
+                              key={t.id}
+                              className="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm transition-colors hover:border-slate-300 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-slate-600 dark:hover:bg-slate-700/50"
+                            >
+                              <span className="font-medium text-slate-700 dark:text-slate-200">
+                                {t.name}
+                              </span>
+                              <button
+                                onClick={() => handleDeleteType(t.id, t._rowIndex)}
+                                className="rounded px-2 py-1 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-900/30 dark:hover:text-rose-300"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          ))}
+                          {types.length === 0 && (
+                            <p className="py-4 text-center text-xs text-slate-500 dark:text-slate-400">
+                              No product types yet
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800/50">
+                        <div className="mb-3 flex items-center justify-between">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                            Phones
+                          </label>
+                          <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                            {phones.length}
+                          </span>
+                        </div>
+                        <div className="max-h-48 space-y-2 overflow-y-auto">
+                          {phones.map((p) => {
+                            const typeName = types.find((t) => t.id === p.typeId)?.name || 'Unknown'
+                            return (
+                              <div
+                                key={p.id}
+                                className="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm transition-colors hover:border-slate-300 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-slate-600 dark:hover:bg-slate-700/50"
+                              >
+                                <div>
+                                  <span className="font-medium text-slate-700 dark:text-slate-200">
+                                    {p.name}
+                                  </span>
+                                  <span className="ml-2 text-xs text-slate-500 dark:text-slate-400">
+                                    ({typeName})
+                                  </span>
+                                </div>
+                                <button
+                                  onClick={() => handleDeletePhone(p.id, p._rowIndex)}
+                                  className="rounded px-2 py-1 text-xs font-medium text-rose-600 transition-colors hover:bg-rose-50 hover:text-rose-700 dark:text-rose-400 dark:hover:bg-rose-900/30 dark:hover:text-rose-300"
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            )
+                          })}
+                          {phones.length === 0 && (
+                            <p className="py-4 text-center text-xs text-slate-500 dark:text-slate-400">
+                              No phones yet
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </section>
 
             {/* Add Product Section */}
             <section
               className={cn(
-                'rounded-2xl p-6 shadow-lg ring-1 backdrop-blur',
-                surface,
+                'rounded-2xl border border-slate-200/60 bg-gradient-to-br from-slate-50 to-white p-8 shadow-xl backdrop-blur-sm dark:border-slate-700/60 dark:from-slate-900/50 dark:to-slate-800/50',
               )}
             >
-              <div className="mb-6 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30">
-                  <span className="text-xl">📦</span>
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold">Add Product to Inventory</h2>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
-                    Create new products with all details
-                  </p>
-                </div>
+              <div className="mb-8 border-b border-slate-200 pb-6 dark:border-slate-700">
+                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+                  Add Product to Inventory
+                </h2>
+                <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                  Create new products with complete details
+                </p>
               </div>
-              <div className="grid gap-4 sm:grid-cols-2">
+
+              <div className="grid gap-6 sm:grid-cols-2">
                 <Input
                   label="Product name"
                   value={productForm.name}
@@ -1007,9 +1030,9 @@ function App() {
                   disabled={!productForm.typeId}
                 />
               </div>
-              <div className="sm:col-span-2">
+              <div className="mt-6">
                 <PrimaryButton onClick={handleAddProduct} className="w-full sm:w-auto">
-                  ➕ Add Product to Inventory
+                  Add Product to Inventory
                 </PrimaryButton>
               </div>
             </section>
@@ -1137,7 +1160,7 @@ function Input({
 }) {
   return (
     <label className="flex flex-col gap-1 text-sm font-medium text-slate-700 dark:text-slate-200">
-      {label}
+      {label && <span>{label}</span>}
       <input
         type={type}
         min={min}
@@ -1160,7 +1183,7 @@ function Select({
 }) {
   return (
     <label className="flex flex-col gap-1 text-sm font-medium text-slate-700 dark:text-slate-200">
-      {label}
+      {label && <span>{label}</span>}
       <select
         className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:cursor-not-allowed disabled:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:ring-cyan-400"
         value={value}
