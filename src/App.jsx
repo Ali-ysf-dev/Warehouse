@@ -1281,7 +1281,7 @@ function App() {
           >
             <div
               className={cn(
-                'relative max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-2xl shadow-2xl',
+                'relative flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl shadow-2xl',
                 surface,
               )}
               onClick={(e) => e.stopPropagation()}
@@ -1306,14 +1306,14 @@ function App() {
                   />
                 </svg>
               </button>
-              <div className="relative h-[70vh] w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+              <div className="relative flex-shrink-0 h-[60vh] w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
                 <img
                   src={selectedProduct.image}
                   alt={selectedProduct.name}
                   className="h-full w-full object-contain"
                 />
               </div>
-              <div className="border-t border-slate-200 p-6 dark:border-slate-700">
+              <div className="flex-shrink-0 border-t border-slate-200 p-6 dark:border-slate-700">
                 <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
                   {selectedProduct.name}
                 </h3>
