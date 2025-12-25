@@ -276,7 +276,7 @@ function App() {
       setCategories((prev) => [...prev, newCat])
       setCategoryName('')
     } catch (err) {
-      alert('Error adding category: ' + err.message)
+      console.error('Error adding category: ' + err.message)
     }
   }
 
@@ -293,7 +293,7 @@ function App() {
       setTypes((prev) => [...prev, newType])
       setTypeName('')
     } catch (err) {
-      alert('Error adding type: ' + err.message)
+      console.error('Error adding type: ' + err.message)
     }
   }
 
@@ -311,7 +311,7 @@ function App() {
       setPhoneName('')
       setPhoneType('')
     } catch (err) {
-      alert('Error adding phone: ' + err.message)
+      console.error('Error adding phone: ' + err.message)
     }
   }
 
@@ -412,7 +412,7 @@ function App() {
         fileInputRef.current.value = ''
       }
     } catch (err) {
-      alert('Error adding product: ' + err.message)
+      console.error('Error adding product: ' + err.message)
     }
   }
 
@@ -469,9 +469,8 @@ function App() {
       }
 
       setCart([])
-      alert('Cart submitted successfully!')
     } catch (err) {
-      alert('Error submitting cart: ' + err.message)
+      console.error('Error submitting cart: ' + err.message)
     }
   }
 
