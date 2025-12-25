@@ -163,6 +163,7 @@ function App() {
   const [imageUploading, setImageUploading] = useState(false)
   const [imagePreview, setImagePreview] = useState('')
   const fileInputRef = useRef(null)
+  const [selectedProduct, setSelectedProduct] = useState(null)
 
   // Fetch all data when authenticated
   useEffect(() => {
@@ -1207,7 +1208,10 @@ function App() {
                     surface,
                   )}
                 >
-                  <div className="relative h-40 w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+                  <div 
+                    className="relative h-40 w-full overflow-hidden bg-slate-100 dark:bg-slate-800 cursor-pointer"
+                    onClick={() => setSelectedProduct(product)}
+                  >
                     <img
                       src={product.image}
                       alt={product.name}
@@ -1217,7 +1221,10 @@ function App() {
                       {productCategoryName(product)}
                     </span>
                     <button
-                      onClick={() => handleDeleteProduct(product.id, product._rowIndex)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleDeleteProduct(product.id, product._rowIndex)
+                      }}
                       className="absolute right-2 top-2 rounded-md bg-rose-500 px-2 py-1 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-rose-600 dark:bg-rose-600 dark:hover:bg-rose-700"
                       title="Delete product"
                     >
@@ -1264,6 +1271,104 @@ function App() {
               </p>
             )}
           </section>
+        )}
+
+        {/* Product Image Modal */}
+        {selectedProduct && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm"
+            onClick={() => setSelectedProduct(null)}
+          >
+            <div
+              className={cn(
+                'relative max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-2xl shadow-2xl',
+                surface,
+              )}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setSelectedProduct(null)}
+                className="absolute right-4 top-4 z-10 rounded-full bg-white/90 p-2 text-slate-700 shadow-lg transition-colors hover:bg-white dark:bg-slate-800/90 dark:text-slate-200 dark:hover:bg-slate-800"
+                aria-label="Close"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+              <div className="relative h-[70vh] w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+                <img
+                  src={selectedProduct.image}
+                  alt={selectedProduct.name}
+                  className="h-full w-full object-contain"
+                />
+              </div>
+              <div className="border-t border-slate-200 p-6 dark:border-slate-700">
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
+                  {selectedProduct.name}
+                </h3>
+                <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="font-semibold text-slate-600 dark:text-slate-400">
+                      Category:
+                    </span>{' '}
+                    <span className="text-slate-900 dark:text-slate-100">
+                      {productCategoryName(selectedProduct)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="font-semibold text-slate-600 dark:text-slate-400">
+                      Type:
+                    </span>{' '}
+                    <span className="text-slate-900 dark:text-slate-100">
+                      {productTypeName(selectedProduct)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="font-semibold text-slate-600 dark:text-slate-400">
+                      Phone:
+                    </span>{' '}
+                    <span className="text-slate-900 dark:text-slate-100">
+                      {productPhoneName(selectedProduct)}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="font-semibold text-slate-600 dark:text-slate-400">
+                      Color:
+                    </span>{' '}
+                    <span className="text-slate-900 dark:text-slate-100">
+                      {selectedProduct.color}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="font-semibold text-slate-600 dark:text-slate-400">
+                      Stock:
+                    </span>{' '}
+                    <span
+                      className={cn(
+                        'font-semibold',
+                        selectedProduct.stock > 0
+                          ? 'text-emerald-600 dark:text-emerald-400'
+                          : 'text-rose-600 dark:text-rose-400',
+                      )}
+                    >
+                      {selectedProduct.stock}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>
